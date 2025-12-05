@@ -12,7 +12,7 @@ struct ContentView: View {
     
     var body: some View {
         if showHome {
-            HomeView()
+            MainTabView()
         } else {
             OnboardingView(showHome: $showHome)
         }

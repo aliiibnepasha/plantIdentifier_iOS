@@ -160,7 +160,7 @@ struct HomeView: View {
                         
                         // Spacer for camera button
                         Spacer()
-                            .frame(width: 90)
+                            .frame(width: 60)
                         
                         // Experts
                         BottomNavItem(icon: "experts-icon", title: "Experts", isActive: false)
@@ -168,30 +168,28 @@ struct HomeView: View {
                         // Garden
                         BottomNavItem(icon: "garden-nav-icon", title: "Garden", isActive: false)
                     }
-                    .frame(height: 90)
+                    .frame(height: 80)
+                    .frame(maxWidth: .infinity)
+                    .padding(.horizontal, 16)
                     .background(Color.white)
-                    .shadow(color: Color.black.opacity(0.1), radius: 10, x: 0, y: -5)
+                    .shadow(color: Color(red: 0, green: 0.52, blue: 0.39).opacity(0.04), radius: 14.65, x: 0, y: -1)
                     
                     // Central Camera Button - Elevated above navigation bar
                     Button(action: {
                         showCamera = true
                     }) {
                         ZStack {
-                            // Green circular background
                             Circle()
-                                .fill(Color(red: 0.05, green: 0.40, blue: 0.33))
-                                .frame(width: 90, height: 90)
-                                .shadow(color: Color.black.opacity(0.15), radius: 8, x: 0, y: 4)
+                                .fill(Color.white)
+                                .frame(width: 70, height: 70)
+                                .shadow(color: Color.black.opacity(0.1), radius: 10, x: 0, y: 5)
                             
-                            // Camera icon - larger size
-                            Image("camera-button-icon")
-                                .resizable()
-                                .scaledToFit()
-                                .frame(width: 90, height: 90)
-                                .foregroundColor(.white)
+                            Image(systemName: "camera.fill")
+                                .font(.system(size: 24))
+                                .foregroundColor(Color(red: 0.0, green: 0.52, blue: 0.39))
                         }
                     }
-                    .offset(y: -20) // Extends above the navigation bar
+                    .offset(y: -35)
                 }
             }
         }
@@ -318,12 +316,15 @@ struct BottomNavItem: View {
             VStack(spacing: 4) {
                 Image(icon) // User will add icons in assets
                     .resizable()
+                    .scaledToFit()
                     .frame(width: 24, height: 24)
-                    .foregroundColor(isActive ? Color(red: 0.05, green: 0.40, blue: 0.33) : .gray)
+                    .foregroundColor(isActive ? Color(red: 0.01, green: 0.22, blue: 0.15) : Color(red: 0.01, green: 0.22, blue: 0.15).opacity(0.34))
                 
                 Text(title)
-                    .font(.system(size: 12, weight: .regular, design: .default))
-                    .foregroundColor(isActive ? Color(red: 0.05, green: 0.40, blue: 0.33) : .gray)
+                    .font(.system(size: 12, weight: .semibold, design: .default))
+                    .foregroundColor(isActive ? Color(red: 0.01, green: 0.22, blue: 0.15) : Color(red: 0.01, green: 0.22, blue: 0.15).opacity(0.34))
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.8)
             }
         }
         .frame(maxWidth: .infinity)

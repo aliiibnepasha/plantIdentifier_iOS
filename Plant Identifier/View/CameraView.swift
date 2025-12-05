@@ -17,25 +17,30 @@ struct CameraView: View {
     @State private var selectedImage: UIImage?
     @State private var showImagePicker = false
     @State private var showNextOptions = false
+    @State private var showScanning = false
+    @State private var showIdentifyView = false
     
     var body: some View {
         ZStack {
             // Camera Preview or Selected Image
-            if let selectedImage = selectedImage {
-                ZStack {
-                    Color.black
-                        .ignoresSafeArea()
-                    
-                    Image(uiImage: selectedImage)
-                        .resizable()
-                        .scaledToFit()
-                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+            GeometryReader { geometry in
+                if let selectedImage = selectedImage {
+                    ZStack {
+                        Color.black
+                            .ignoresSafeArea()
+                        
+                        Image(uiImage: selectedImage)
+                            .resizable()
+                            .scaledToFit()
+                            .frame(width: geometry.size.width, height: geometry.size.height)
+                            .clipped()
+                    }
+                } else {
+                    CameraPreview(cameraManager: cameraManager)
                         .ignoresSafeArea()
                 }
-            } else {
-                CameraPreview(cameraManager: cameraManager)
-                    .ignoresSafeArea()
             }
+            .ignoresSafeArea()
             
             // Top Bar
             VStack {
@@ -165,7 +170,13 @@ struct CameraView: View {
                         
                         // Central Camera Button (with magnifying glass icon)
                         Button(action: {
-                            cameraManager.capturePhoto()
+                            if let image = selectedImage {
+                                // If image is already selected, start scanning
+                                showScanning = true
+                            } else {
+                                // Capture photo
+                                cameraManager.capturePhoto()
+                            }
                         }) {
                             ZStack {
                                 // Background Image from Assets
@@ -214,6 +225,21 @@ struct CameraView: View {
         .onChange(of: cameraManager.capturedImage) { newImage in
             if let image = newImage {
                 selectedImage = image
+                // Start scanning automatically when image is captured
+                showScanning = true
+            }
+        }
+        .fullScreenCover(isPresented: $showScanning) {
+            if let image = selectedImage {
+                ScanningView(image: image) {
+                    showScanning = false
+                    showIdentifyView = true
+                }
+            }
+        }
+        .fullScreenCover(isPresented: $showIdentifyView) {
+            if let image = selectedImage {
+                IdentifyView(image: image)
             }
         }
         .sheet(isPresented: $showImagePicker) {
