@@ -8,6 +8,8 @@
 import SwiftUI
 
 struct HomeView: View {
+    @State private var showCamera = false
+    
     var body: some View {
         ZStack {
             // Background
@@ -67,13 +69,17 @@ struct HomeView: View {
                         // Main Feature Cards
                         VStack(spacing: 16) {
                             // Identify Plant Card
-                            FeatureCard(
-                                icon: "camera-icon",
-                                title: "Identify",
-                                subtitle: "Plant",
-                                image: "identify-plant-image",
-                                backgroundImage: "identify-card-bg"
-                            )
+                            Button(action: {
+                                showCamera = true
+                            }) {
+                                FeatureCard(
+                                    icon: "camera-icon",
+                                    title: "Identify",
+                                    subtitle: "Plant",
+                                    image: "identify-plant-image",
+                                    backgroundImage: "identify-card-bg"
+                                )
+                            }
                             
                             // Diagnose Plant Card
                             FeatureCard(
@@ -143,33 +149,54 @@ struct HomeView: View {
             VStack {
                 Spacer()
                 
-                HStack(spacing: 0) {
-                    // Home
-                    BottomNavItem(icon: "home-icon", title: "Home", isActive: true)
-                    
-                    // Diagnose
-                    BottomNavItem(icon: "diagnose-nav-icon", title: "Diagnose", isActive: false)
-                    
-                    // Central Camera Button
-                    Button(action: {
-                        // Camera action
-                    }) {
-                        Image("camera-button-icon") // User will add this icon in assets
-                            .resizable()
-                            .frame(width: 70, height: 70)
+                ZStack(alignment: .bottom) {
+                    // Navigation Bar Background
+                    HStack(spacing: 0) {
+                        // Home
+                        BottomNavItem(icon: "home-icon", title: "Home", isActive: true)
+                        
+                        // Diagnose
+                        BottomNavItem(icon: "diagnose-nav-icon", title: "Diagnose", isActive: false)
+                        
+                        // Spacer for camera button
+                        Spacer()
+                            .frame(width: 90)
+                        
+                        // Experts
+                        BottomNavItem(icon: "experts-icon", title: "Experts", isActive: false)
+                        
+                        // Garden
+                        BottomNavItem(icon: "garden-nav-icon", title: "Garden", isActive: false)
                     }
-                    .padding(.horizontal, 20)
+                    .frame(height: 90)
+                    .background(Color.white)
+                    .shadow(color: Color.black.opacity(0.1), radius: 10, x: 0, y: -5)
                     
-                    // Experts
-                    BottomNavItem(icon: "experts-icon", title: "Experts", isActive: false)
-                    
-                    // Garden
-                    BottomNavItem(icon: "garden-nav-icon", title: "Garden", isActive: false)
+                    // Central Camera Button - Elevated above navigation bar
+                    Button(action: {
+                        showCamera = true
+                    }) {
+                        ZStack {
+                            // Green circular background
+                            Circle()
+                                .fill(Color(red: 0.05, green: 0.40, blue: 0.33))
+                                .frame(width: 90, height: 90)
+                                .shadow(color: Color.black.opacity(0.15), radius: 8, x: 0, y: 4)
+                            
+                            // Camera icon - larger size
+                            Image("camera-button-icon")
+                                .resizable()
+                                .scaledToFit()
+                                .frame(width: 90, height: 90)
+                                .foregroundColor(.white)
+                        }
+                    }
+                    .offset(y: -20) // Extends above the navigation bar
                 }
-                .frame(height: 90)
-                .background(Color.white)
-                .shadow(color: Color.black.opacity(0.1), radius: 10, x: 0, y: -5)
             }
+        }
+        .fullScreenCover(isPresented: $showCamera) {
+            CameraView()
         }
     }
 }
